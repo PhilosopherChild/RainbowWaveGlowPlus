@@ -2,7 +2,8 @@ name: Release (build & attach zip)
 
 on:
   release:
-    types: [published]
+    types: [published, edited]
+  workflow_dispatch:
 
 jobs:
   build-and-upload:
@@ -10,29 +11,26 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
       - name: Install deps
-        run: pnpm install --frozen-lockfile=false
+        run: npm install
 
       - name: Build
-        run: pnpm run build
+        run: npm run build
 
       - name: Package ZIP
         run: |
           mkdir -p release
           cp -r dist plugin.json icon.png release/
           cd release
-          zip -r RainbowWaveGlowPlus_${{ github.event.release.tag_name }}.zip .
+          zip -r RainbowWaveGlowPlus_${{ github.ref_name }}.zip .
 
       - name: Attach to Release
         uses: softprops/action-gh-release@v2
