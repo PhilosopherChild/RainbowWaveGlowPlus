@@ -1,11 +1,27 @@
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'dist', emptyOutDir: true, sourcemap: false,
-    lib: { entry: 'frontend/src/index.tsx', name: 'RainbowWaveGlowPlus', formats: ['es'] },
-    rollupOptions: { output: { entryFileNames: 'index.js' } }
-  }
-})
+    outDir: "dist",
+    target: "esnext",
+    sourcemap: false,
+    minify: true,
+  },
+  // Prevent "ReferenceError: process is not defined" in Decky's webview
+  define: {
+    global: "window",
+    "process.env": {},
+    "process.browser": true,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "window",
+        "process.env": "{}",
+      },
+    },
+  },
+});
