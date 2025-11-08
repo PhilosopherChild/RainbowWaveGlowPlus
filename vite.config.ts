@@ -1,4 +1,4 @@
-// vite.config.ts  — FINAL
+// vite.config.ts — FINAL
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -8,20 +8,20 @@ export default defineConfig({
     outDir: "dist",
     target: "esnext",
     sourcemap: false,
-    minify: true,
+    minify: true
   },
-  // Fix Decky webview crashes by removing Node-only globals
+  // prevent "ReferenceError: process is not defined" in Decky webview
   define: {
     global: "window",
-    "process.env": {},        // prevents "process is not defined"
-    "process.browser": true,  // some libs probe this flag
+    "process.env": {},
+    "process.browser": true
   },
   optimizeDeps: {
     esbuildOptions: {
       define: {
         global: "window",
-        "process.env": "{}",
-      },
-    },
-  },
+        "process.env": "{}"
+      }
+    }
+  }
 });
