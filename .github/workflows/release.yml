@@ -2,15 +2,13 @@ name: Release (build & attach zip)
 
 on:
   release:
-    types: [published, edited]
-  workflow_dispatch:
+    types: [published]
 
 jobs:
-  build-and-attach:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,35 +16,28 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+      - name: Enable corepack and pin pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.1.0 --activate
 
-      - name: Install deps
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile=false
 
       - name: Build
         run: pnpm run build
 
-      # Create the exact structure Decky expects:
-      # RainbowWaveGlowPlus/
-      #   dist/  plugin.json  package.json  icon.png  LICENSE
-      - name: Package ZIP
+      - name: Create plugin zip
         run: |
-          set -e
-          mkdir -p package/RainbowWaveGlowPlus
-          cp -r dist package/RainbowWaveGlowPlus/
-          cp plugin.json package/RainbowWaveGlowPlus/
-          cp package.json package/RainbowWaveGlowPlus/
-          [ -f icon.png ] && cp icon.png package/RainbowWaveGlowPlus/
-          [ -f LICENSE ] && cp LICENSE package/RainbowWaveGlowPlus/
-          cd package
-          zip -r "RainbowWaveGlowPlus_${{ github.ref_name }}.zip" RainbowWaveGlowPlus
+          mkdir -p bundle/RainbowWaveGlowPlus
+          cp -r dist plugin.json package.json LICENSE icon.png bundle/RainbowWaveGlowPlus/
+          cd bundle
+          zip -r RainbowWaveGlowPlus_${{ github.event.release.tag_name }}.zip RainbowWaveGlowPlus
+          echo "ASSET_PATH=$(pwd)/RainbowWaveGlowPlus_${{ github.event.release.tag_name }}.zip" >> $GITHUB_ENV
 
-      - name: Attach to Release
+      - name: Upload asset to release
         uses: softprops/action-gh-release@v2
         with:
-          files: package/RainbowWaveGlowPlus_${{ github.ref_name }}.zip
+          files: ${{ env.ASSET_PATH }}
