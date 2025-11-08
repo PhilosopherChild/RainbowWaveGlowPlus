@@ -6,10 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-upload:
+  build-and-attach:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,20 +20,33 @@ jobs:
         with:
           node-version: 20
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Install deps
-        run: npm install
+        run: pnpm install --frozen-lockfile=false
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
+      # Create the exact structure Decky expects:
+      # RainbowWaveGlowPlus/
+      #   dist/  plugin.json  package.json  icon.png  LICENSE
       - name: Package ZIP
         run: |
-          mkdir -p release
-          cp -r dist plugin.json icon.png release/
-          cd release
-          zip -r RainbowWaveGlowPlus_${{ github.ref_name }}.zip .
+          set -e
+          mkdir -p package/RainbowWaveGlowPlus
+          cp -r dist package/RainbowWaveGlowPlus/
+          cp plugin.json package/RainbowWaveGlowPlus/
+          cp package.json package/RainbowWaveGlowPlus/
+          [ -f icon.png ] && cp icon.png package/RainbowWaveGlowPlus/
+          [ -f LICENSE ] && cp LICENSE package/RainbowWaveGlowPlus/
+          cd package
+          zip -r "RainbowWaveGlowPlus_${{ github.ref_name }}.zip" RainbowWaveGlowPlus
 
       - name: Attach to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: release/*.zip
+          files: package/RainbowWaveGlowPlus_${{ github.ref_name }}.zip
