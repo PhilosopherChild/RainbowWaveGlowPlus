@@ -1,0 +1,17 @@
+{
+  "name": "RainbowWaveGlowPlus",
+  "author": "Havoc",
+  "flags": [
+    "root"
+  ],
+  "publish": {
+    "tags": [
+      "visuals",
+      "css",
+      "ui",
+      "effects"
+    ],
+    "description": "Rainbow halo controller with presets, eco, focus-only, auto-night, slots A/B/C, JSON export/import, scanlines/flicker/jitter toggles, optional Smart Tint from cover art.",
+    "image": "icon.png"
+  }
+}

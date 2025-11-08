@@ -1,0 +1,10 @@
+
+{
+  "name": "rainbow-wave-glow-plus",
+  "version": "3.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": { "build": "vite build", "dev": "vite" },
+  "devDependencies": { "typescript": "^5.0.0", "vite": "^4.5.0", "@vitejs/plugin-react": "^4.2.0" },
+  "dependencies": { "decky-frontend-lib": "^3.25.0", "react": "^18.2.0", "react-dom": "^18.2.0" }
+}

@@ -1,0 +1,13 @@
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "Node",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": { "decky-frontend-lib": ["./node_modules/decky-frontend-lib"] }
+  },
+  "include": ["frontend/src"]
+}
